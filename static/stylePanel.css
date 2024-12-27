@@ -1,0 +1,231 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,600&display=swap');
+
+:root {
+    --layout-background-color: #ffffff;
+    --layout-primary-color: #327ae7;
+    --layout-secondary-color: #242424;
+    --layout-text-color: #FFFFFF;
+    --sidebar-background: #003399;
+    --main-background: #003366;
+    --footer-background: #003399;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: "Poppins", sans-serif;
+    background-color: var(--main-background);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    overflow: hidden;
+}
+
+#panel-container {
+    display: flex;
+    width: 100vw;
+    height: 100vh;
+    background-color: #003366;
+    color: white;
+    position: relative; /* Permite que os elementos sejam posicionados dentro do container */
+
+}
+
+#sidebar {
+    width: 50%;
+    background-color: #003399;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    max-height: 100vh;
+    overflow: hidden;
+}
+
+#clinic-logo {
+    width: 80%;
+    margin-bottom: 20px;
+}
+
+#info-box {
+    display: flex;
+    justify-content: space-around;
+    width: 100%;
+    padding: 20px;
+    background-color: var(--sidebar-background);
+    border-bottom: 2px solid #001F5C;
+    color: var(--layout-text-color);
+    font-weight: bold;
+    font-size: 1.2em;
+}
+
+#recent-list {
+    list-style: none;
+    padding: 0;
+    width: 100%;
+    font-size: 36px;
+    overflow-y: auto;
+    max-height: 70vh;
+}
+
+#recent-list li {
+    display: flex;
+    justify-content: space-around;
+    padding: 8px;
+    background-color: #005580;
+    margin-bottom: 8px;
+    color: var(--layout-text-color);
+    font-weight: bold;
+    border-radius: 5px;
+}
+
+#recent-list li span {
+    flex: 1;
+    text-align: center;
+}
+
+#main-content {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 100vh;
+    overflow: hidden;
+}
+
+#header {
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+    background-color: #000;
+    color: var(--layout-text-color);
+    padding: 4.5%;
+    font-size: 24px;
+    text-align: center;
+}
+
+.header-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    text-align: center;
+}
+
+.header-item span {
+    font-size: 60px;
+}
+
+.header-item h1 {
+    margin: 0;
+    font-size: 100px;
+    color: #ffffff;  /* Mantém a cor branca */
+    font-weight: bold; /* Deixa o texto mais espesso */
+}
+
+/* Estilos gerais */
+#video-container {
+    position: relative;
+    flex-grow: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+    background-color: #003366;
+}
+
+#clinic-video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* Garante que o vídeo ocupe toda a área */
+}
+
+/* Modo tela cheia para o vídeo */
+body.fullscreen #video-container {
+    width: 100%;
+    height: auto;
+    max-height: 100vh;
+}
+
+body.fullscreen #clinic-video {
+    width: 100%;
+    height: auto;
+    object-fit: auto;
+}
+
+#footer {
+    background-color: var(--footer-background);
+    color: var(--layout-text-color);
+    padding: 10px;
+    text-align: center;
+    font-size: 18px;
+}
+
+#footer {
+    position: absolute; /* Permite que o footer seja posicionado fora do vídeo */
+    bottom: 20px; /* Distância da borda inferior */
+    left: 10px; /* Distância da borda esquerda */
+    color: var(--layout-text-color);
+    font-size: 18px;
+    font-weight: bold;
+    background-color: rgba(0, 0, 0, 0.5); /* Fundo semi-transparente para melhorar legibilidade */
+    padding: 5px 15px;
+    border-radius: 5px;
+    z-index: 10; /* Garante que o texto fique sobre o vídeo */
+}
+
+
+/* Responsividade */
+@media (max-width: 1024px) {
+    body {
+        flex-direction: column;
+    }
+
+    #panel-container {
+        flex-direction: column;
+    }
+
+    #sidebar {
+        width: 100%;
+        height: 75%;
+    }
+
+    #main-content {
+        width: 100%;
+        height: 25%;
+    }
+
+    #header {
+        font-size: 18px;
+    }
+
+    #video-container {
+        max-height: 50vh;
+    }
+
+    .header-item h1 {
+        font-size: 40px;
+    }
+}
+
+#overlay-info {
+    position: absolute;
+    bottom: 10px; /* Alinha o texto no fundo */
+    right: 10px; /* Alinha o texto à direita */
+    color: white;
+    font-size: 18px;
+    font-weight: bold;
+    background-color: rgba(0, 0, 0, 0.5); /* Fundo semi-transparente para melhorar legibilidade */
+    padding: 5px 15px;
+    border-radius: 5px;
+    z-index: 10; /* Garante que o texto fique sobre o vídeo */
+}
+@media (max-width: 1024px) {
+    #overlay-info {
+        font-size: 14px; /* Reduz o tamanho da fonte em telas menores */
+    }
+}

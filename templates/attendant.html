@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Atendente - {{ clinic.name }}</title>
+    <link rel="stylesheet" href="/static/styleAttendant.css">
+</head>
+<body>
+    <div id="attendant-container" data-clinic-id="{{ clinic.id }}">
+        <header>
+            <h3>Atendente - Unidade {{ clinic.name }}</h3>
+            <p>Localização: {{ clinic.location }}</p>
+        </header>
+
+        <section class="control-section">
+            <h4>Selecione o Guichê</h4>
+            <select id="guiche-select" aria-label="Selecione o Guichê">
+                <option value="1">Guichê 1</option>
+                <option value="2">Guichê 2</option>
+                <option value="3">Guichê 3</option>
+                <option value="4">Guichê 4</option>
+                <option value="5">Guichê 5</option>
+                <option value="6">Guichê 6</option>
+                <option value="7">Guichê 7</option>
+                <option value="8">Guichê 8</option>
+                <option value="9">Guichê 9</option>
+                <option value="10">Guichê 10</option>
+            </select>
+        </section>
+
+        <section class="button-section">
+            <button id="generate-password">Nova Senha</button>
+            <button id="reinforce-password" style="display: none;">Chamar Novamente</button>
+            <button id="attend-patient" style="display: none;">Paciente Atendido</button>
+        </section>
+
+        <section class="recent-calls-section">
+            <h4>Últimas Senhas Chamadas</h4>
+            <ul id="recent-calls" aria-live="polite">
+                <!-- Senhas chamadas aparecem aqui -->
+            </ul>
+        </section>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
+    <script>
+        var clinic_id = document.getElementById('attendant-container').getAttribute('data-clinic-id');
+        var socket = io.connect('http://' + document.domain + ':' + location.port);
+
+        socket.emit('join', { 'clinic_id': clinic_id });
+
+        let lastPasswords = {};
+
+        // Função para gerar uma nova senha
+        document.getElementById('generate-password').onclick = function() {
+            const guiche = document.getElementById('guiche-select').value;
+            if (guiche) {
+                socket.emit('generate_password', { guiche: guiche, clinic_id: clinic_id });
+                toggleGenerateButton(false);
+                document.getElementById('attend-patient').style.display = 'inline';
+            }
+        };
+
+        // Função para reforçar a última senha
+        document.getElementById('reinforce-password').onclick = function() {
+            const guiche = document.getElementById('guiche-select').value;
+            if (lastPasswords[guiche]) {
+                socket.emit('reinforce_password', { password: lastPasswords[guiche], guiche: guiche, clinic_id: clinic_id });
+            }
+        };
+
+        // Evento para nova senha
+        socket.on('new_password', function(data) {
+            if (data && data.password && data.guiche) {
+                lastPasswords[data.guiche] = data.password;
+
+                // Atualizar lista de chamadas recentes
+                updateRecentCalls(data.password, data.guiche);
+
+                // Mostrar botão "Chamar Novamente" apenas para o guichê atual
+                const guicheAtual = document.getElementById('guiche-select').value;
+                if (data.guiche === guicheAtual) {
+                    document.getElementById('reinforce-password').style.display = 'inline';
+                } else {
+                    document.getElementById('reinforce-password').style.display = 'none';
+                }
+            }
+        });
+
+        function updateRecentCalls(password, guiche) {
+            const recentCalls = document.getElementById('recent-calls');
+            const newItem = document.createElement('li');
+            const now = new Date().toLocaleTimeString();
+            newItem.innerHTML = `<strong>Senha:</strong> ${password} | <strong>Guichê:</strong> ${guiche} | <strong>Hora:</strong> ${now}`;
+            recentCalls.insertBefore(newItem, recentCalls.firstChild);
+
+            if (recentCalls.children.length > 7) {
+                recentCalls.removeChild(recentCalls.lastChild);
+            }
+        }
+
+        function toggleGenerateButton(enable) {
+            document.getElementById('generate-password').disabled = !enable;
+        }
+
+        // Resetar botões ao atender paciente
+        document.getElementById('attend-patient').onclick = function() {
+            toggleGenerateButton(true);
+            this.style.display = 'none';
+            document.getElementById('reinforce-password').style.display = 'none';
+        };
+    </script>
+</body>
+</html>

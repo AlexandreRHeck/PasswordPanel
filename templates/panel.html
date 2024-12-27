@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Painel de Senhas</title>
+    <link rel="stylesheet" href="/static/stylePanel.css">
+</head>
+<body>
+    <div id="panel-container">
+        <div id="sidebar">
+            <img id="clinic-logo" src="/static/logo.png" alt="Logo da Clínica">
+            <h3>Últimas Senhas Chamadas</h3>
+            <div id="info-box">
+                <span>Senha</span>
+                <span>Guichê</span>
+               
+            </div>
+            <ul id="recent-list"></ul>
+        </div>
+
+        <div id="main-content">
+            <div id="header">
+                <div class="header-item">
+                    <span>Senha:</span> 
+                    <h1 id="current-password">0</h1>
+                </div>
+                <div class="header-item">
+                    <span>Guichê:</span>
+                    <h1 id="current-guiche">0</h1>
+                </div>
+            </div>
+
+            <div id="video-container">
+                <video id="clinic-video" controls autoplay muted loop>
+                    <source src="/static/video2025.mp4" type="video/mp4">
+                    Seu navegador não suporta vídeos HTML5.
+                </video>
+            </div>
+        </div>
+
+        <!-- Data, Hora e Unidade fora do vídeo, no canto inferior esquerdo -->
+        <div id="footer">
+            <span id="current-date"></span> | <span id="current-time"></span> | <span id="current-unit">Unidade {{ clinic.name }}</span>
+        </div>
+    </div>
+
+    <audio id="sound-alert" src="/static/som_chamada.mp3" preload="auto"></audio>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
+    <script>
+        // Função para alternar tela cheia para o contêiner do painel
+        function openFullscreen() {
+            const panelContainer = document.getElementById('panel-container');
+            if (panelContainer.requestFullscreen) {
+                panelContainer.requestFullscreen();
+            } else if (panelContainer.webkitRequestFullscreen) { /* Safari */
+                panelContainer.webkitRequestFullscreen();
+            } else if (panelContainer.msRequestFullscreen) { /* IE11 */
+                panelContainer.msRequestFullscreen();
+            }
+        }
+
+       
+        // Exemplo: Ativar tela cheia quando a página carregar
+        window.onload = function() {
+            openFullscreen();
+        };
+
+        // Socket.io para atualização das senhas
+        var socket = io.connect('http://' + document.domain + ':' + location.port);
+        var clinic_id = {{ clinic.id | tojson }};
+        socket.emit('join', { 'clinic_id': clinic_id });
+
+        var sound = document.getElementById('sound-alert');
+        var soundQueue = [];
+        var isPlayingSound = false;
+
+        function playSoundQueue() {
+            if (soundQueue.length > 0 && !isPlayingSound) {
+                isPlayingSound = true;
+                sound.play().then(() => {
+                    isPlayingSound = false;
+                    soundQueue.shift();
+                    playSoundQueue();
+                }).catch((error) => {
+                    console.log("Erro ao tentar reproduzir o som: ", error);
+                    isPlayingSound = false;
+                });
+            }
+        }
+
+        socket.on('new_password', function(data) {
+            document.getElementById('current-password').innerHTML = data.password;
+            document.getElementById('current-guiche').innerHTML = data.guiche;
+
+            soundQueue.push('play');
+            playSoundQueue();
+
+            var recentList = document.getElementById('recent-list');
+            var newItem = document.createElement('li');
+            newItem.innerHTML = `<span>${data.password}</span><span>${data.guiche}</span>`;
+            // adicionar horário, ultimas chamadas <span>${new Date().toLocaleTimeString()}</span> 
+            recentList.insertBefore(newItem, recentList.firstChild);
+
+            if (recentList.children.length > 5) {
+                recentList.removeChild(recentList.lastChild);
+            }
+        });
+
+        function updateDateTime() {
+            var now = new Date();
+            document.getElementById('current-date').innerHTML = now.toLocaleDateString();
+            document.getElementById('current-time').innerHTML = now.toLocaleTimeString();
+        }
+
+        setInterval(updateDateTime, 1000);
+        updateDateTime();
+    </script>
+</body>
+</html>

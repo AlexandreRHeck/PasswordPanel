@@ -1,0 +1,128 @@
+/* Reset básico */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f4;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    color: #333;
+    margin: 0;
+}
+
+#attendant-container {
+    background-color: white;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    max-width: 380px;
+    width: 100%;
+    text-align: center;
+}
+
+header h3 {
+    font-size: 1.6em;
+    color: #004d99;
+    margin-bottom: 5px;
+}
+
+header p {
+    color: #666;
+    font-size: 0.9em;
+    margin-bottom: 20px;
+}
+
+h4 {
+    font-size: 1.2em;
+    color: #004d99;
+    margin-bottom: 10px;
+}
+
+.control-section,
+.button-section,
+.recent-calls-section {
+    margin-bottom: 20px;
+}
+
+select, button {
+    width: 100%;
+    padding: 12px;
+    margin-top: 10px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    font-size: 1em;
+    outline: none;
+}
+
+select {
+    background-color: #f9f9f9;
+}
+
+button {
+    background-color: #004d99;
+    color: white;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    font-weight: bold;
+}
+
+button:hover {
+    background-color: #005b9f;
+}
+
+button:disabled {
+    background-color: #b3b3b3;
+    cursor: not-allowed;
+}
+
+#reinforce-password {
+    background-color: #ff8000;
+}
+
+#attend-patient {
+    background-color: #4caf50;
+}
+
+#recent-calls {
+    list-style: none;
+    padding: 0;
+    max-height: 200px;
+    overflow-y: auto;
+    background-color: #f1f8ff;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    font-size: 0.9em;
+}
+
+#recent-calls li {
+    padding: 10px;
+    background-color: #eaf4fd;
+    border-bottom: 1px solid #ddd;
+    color: #004d99;
+}
+
+#recent-calls li:last-child {
+    border-bottom: none;
+}
+
+#recent-calls li strong {
+    color: #005b9f;
+}
+
+/* Estilos responsivos para dispositivos móveis */
+@media (max-width: 600px) {
+    #attendant-container {
+        padding: 15px;
+        width: 100%;
+    }
+
+    header h3 {
+        font-size: 1.4em;
+    }
+}
